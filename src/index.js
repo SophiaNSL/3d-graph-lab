@@ -13,7 +13,24 @@ var graphql_query = {
       },
       edges: {
         node: {
-          name: true
+          uuid: true,
+          name: true,
+          dataElementConcept: {
+            uuid: true,
+            name: true,
+            objectClass: {
+              uuid: true,
+              name: true
+            },
+            property: {
+              uuid: true,
+              name: true
+            }
+          },
+          valueDomain: {
+            uuid: true,
+            name: true
+          }
         }
       }
     }
@@ -41,12 +58,33 @@ function reset_data() {
   }
 }
 
+function add_display_data(node, superitem) {
+  // console.log(node)
+  
+  if ('uuid' in node && 'name' in node) {
+    display_data['nodes'].push({
+      'id': node['uuid'],
+      'name': node['name'],
+      'val': 1
+    })
+    
+    if (superitem != null) {
+      display_data['links'].push({
+        'source': superitem,
+        'target': node['uuid']
+      })
+    }
+
+    // console.log(display_data)
+  }
+}
+
 function dfs(data, superitem) {
   // Depth first search on returned graphql data
   // to build 3d-force-graph data
   // assumes structure is a tree
   
-  console.log(data)
+  // console.log(data)
   var keys = Object.keys(data)
   //console.log(keys)
   
@@ -63,35 +101,23 @@ function dfs(data, superitem) {
         dfs(edge, superitem)
       }
     } else if (key == 'node') {
-      //console.log('adding a node')
-      display_data['nodes'].push({
-        'id': data['node']['uuid'],
-        'name': data['node']['name'],
-        'val': 1
-      })
-      
-      if (superitem != null) {
-        display_data['links'].push({
-          'source': superitem,
-          'target': data['node']['uuid']
-        })
-      }
-
+      add_display_data(data['node'], superitem)
       dfs(data['node'], superitem)
     } else {
       var item = data[key]
-      console.log(typeof item)
+      // console.log(typeof item)
       if (typeof item == 'object') {
-        dfs(item, superitem)
+        if (item != null) {
+          add_display_data(item, superitem)
+          dfs(item, superitem)
+        }
       }
     }
   }
-
 }
 
 fetch(url, request_options).then(
   function(response) {
-    console.log(response.status)
     response.json().then(
       function(data) {
         reset_data()

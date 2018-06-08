@@ -80,8 +80,11 @@ function dfs(data, superitem, type) {
 // Setup Graph and request
 
 const graph_elem = document.getElementById('3d-graph')
-var aristotleGraph = ForceGraph3D()(graph_elem);
-aristotleGraph.nodeAutoColorBy('type')
+var aristotleGraph = ForceGraph3D()(graph_elem)
+  .nodeAutoColorBy('type')
+  .width(1280)
+  .height(720)
+
 var display_data = {}
 var seen_uuids = []
 

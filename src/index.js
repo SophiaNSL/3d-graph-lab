@@ -1,9 +1,9 @@
 import { jsonToGraphQLQuery } from 'json-to-graphql-query'
+import ForceGraph3D from '3d-force-graph'
+
+// Setup graphql query
 
 const default_uuid = "6b5b5d6a-158c-11e7-803e-0242ac110017"
-
-// graphql_query = '{ metadata (uuid: \"' + default_uuid + '\") { edges { node { uuid name } } } }',
-const base_url = 'https://registry.aristotlemetadata.com/api/graphql/api?raw=true'
 
 var graphql_query = {
   query: {
@@ -40,6 +40,8 @@ var graphql_query = {
 var text_gql_query = jsonToGraphQLQuery(graphql_query)
 console.log(text_gql_query)
 
+// Set request params
+
 const request_options = {
   'method': 'GET',
   'headers': {
@@ -48,8 +50,16 @@ const request_options = {
   'mode': 'cors',
 }
 
+// Set url
+
+const base_url = 'https://registry.aristotlemetadata.com/api/graphql/api?raw=true'
 var url = base_url + '&query=' + text_gql_query
 var display_data = {}
+
+// Setup Graph
+
+const graph_elem = document.getElementById('3d-graph')
+var aristotleGraph = ForceGraph3D()(graph_elem);
 
 function reset_data() {
   display_data = {
@@ -75,7 +85,8 @@ function add_display_data(node, superitem) {
       })
     }
 
-    // console.log(display_data)
+    aristotleGraph.graphData(display_data);
+
   }
 }
 
@@ -115,6 +126,8 @@ function dfs(data, superitem) {
     }
   }
 }
+
+// Make request
 
 fetch(url, request_options).then(
   function(response) {

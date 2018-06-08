@@ -3,33 +3,39 @@ import ForceGraph3D from '3d-force-graph'
 
 // Setup graphql query
 
-const default_uuid = "6b5b5d6a-158c-11e7-803e-0242ac110017"
+const default_uuid = "66eeaffc-158c-11e7-803e-0242ac110017"
 
 var graphql_query = {
   query: {
-    dataElements: {
+    datasetSpecifications: {
       __args: {
         uuid: default_uuid
       },
       edges: {
         node: {
-          uuid: true,
           name: true,
-          dataElementConcept: {
-            uuid: true,
-            name: true,
-            objectClass: {
+          uuid: true,
+          dssdeinclusionSet: {
+            dataElement: {
               uuid: true,
-              name: true
-            },
-            property: {
-              uuid: true,
-              name: true
+              name: true,
+              dataElementConcept: {
+                uuid: true,
+                name: true,
+                objectClass: {
+                  uuid: true,
+                  name: true
+                },
+                property: {
+                  uuid: true,
+                  name: true
+                }
+              },
+              valueDomain: {
+                uuid: true,
+                name: true
+              }
             }
-          },
-          valueDomain: {
-            uuid: true,
-            name: true
           }
         }
       }
@@ -60,6 +66,7 @@ var display_data = {}
 
 const graph_elem = document.getElementById('3d-graph')
 var aristotleGraph = ForceGraph3D()(graph_elem);
+var seen_uuids = []
 
 function reset_data() {
   display_data = {
@@ -72,11 +79,15 @@ function add_display_data(node, superitem) {
   // console.log(node)
   
   if ('uuid' in node && 'name' in node) {
-    display_data['nodes'].push({
-      'id': node['uuid'],
-      'name': node['name'],
-      'val': 1
-    })
+
+    if (!seen_uuids.includes(node['uuid'])) {
+      display_data['nodes'].push({
+        'id': node['uuid'],
+        'name': node['name'],
+        'val': 1
+      })
+      seen_uuids.push(node['uuid'])
+    }
     
     if (superitem != null) {
       display_data['links'].push({
@@ -95,7 +106,7 @@ function dfs(data, superitem) {
   // to build 3d-force-graph data
   // assumes structure is a tree
   
-  // console.log(data)
+  console.log(data)
   var keys = Object.keys(data)
   //console.log(keys)
   
@@ -110,6 +121,11 @@ function dfs(data, superitem) {
       for (var j=0; j < data['edges'].length; j++) {
         var edge = data['edges'][j]
         dfs(edge, superitem)
+      }
+    } else if (key == 'dssdeinclusionSet') {
+      for (var k=0; k < data['dssdeinclusionSet'].length; k++) {
+        var item = data['dssdeinclusionSet'][k]
+        dfs(item, superitem)
       }
     } else if (key == 'node') {
       add_display_data(data['node'], superitem)

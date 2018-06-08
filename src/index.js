@@ -1,11 +1,11 @@
-import jsonToGraphQLQuery from 'json-to-graphql-query'
+import { jsonToGraphQLQuery } from 'json-to-graphql-query'
 
-var default_uuid = "6b5b5d6a-158c-11e7-803e-0242ac110017"
+const default_uuid = "6b5b5d6a-158c-11e7-803e-0242ac110017"
 
 // graphql_query = '{ metadata (uuid: \"' + default_uuid + '\") { edges { node { uuid name } } } }',
-base_url = 'https://registry.aristotlemetadata.com/api/graphql/api?raw=true'
+const base_url = 'https://registry.aristotlemetadata.com/api/graphql/api?raw=true'
 
-graphql_query = {
+var graphql_query = {
   query: {
     dataElements: {
       __args: {
@@ -20,10 +20,10 @@ graphql_query = {
   }
 }
 
-text_gql_query = jsonToGraphQLQuery(graqhql_query)
+var text_gql_query = jsonToGraphQLQuery(graphql_query)
 console.log(text_gql_query)
 
-request_options = {
+const request_options = {
   'method': 'GET',
   'headers': {
     'Accept': 'application/json',
@@ -31,9 +31,8 @@ request_options = {
   'mode': 'cors',
 }
 
-url = base_url + '&query=' + text_gql_query
-
-display_data = {}
+var url = base_url + '&query=' + text_gql_query
+var display_data = {}
 
 function reset_data() {
   display_data = {
@@ -48,19 +47,19 @@ function dfs(data, superitem) {
   // assumes structure is a tree
   
   console.log(data)
-  keys = Object.keys(data)
+  var keys = Object.keys(data)
   //console.log(keys)
   
   if ('uuid' in data) {
     superitem = data['uuid']
   }
 
-  for (i=0; i < keys.length; i++) {
-    key = keys[i]
+  for (var i=0; i < keys.length; i++) {
+    var key = keys[i]
 
     if (key == 'edges') {
-      for (j=0; j < data['edges'].length; j++) {
-        edge = data['edges'][j]
+      for (var j=0; j < data['edges'].length; j++) {
+        var edge = data['edges'][j]
         dfs(edge, superitem)
       }
     } else if (key == 'node') {
@@ -80,7 +79,7 @@ function dfs(data, superitem) {
 
       dfs(data['node'], superitem)
     } else {
-      item = data[key]
+      var item = data[key]
       console.log(typeof item)
       if (typeof item == 'object') {
         dfs(item, superitem)

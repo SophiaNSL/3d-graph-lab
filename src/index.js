@@ -2,13 +2,7 @@ import ForceGraph3D from '3d-force-graph'
 import Vue from 'vue'
 import { gql_request } from './graphql.js'
 
-function reset_data() {
-}
-
-
-
-// Setup Graph and request
-
+// Setup Graph
 const graph_elem = document.getElementById('3d-graph')
 var aristotleGraph = ForceGraph3D()(graph_elem)
   .nodeAutoColorBy('type')

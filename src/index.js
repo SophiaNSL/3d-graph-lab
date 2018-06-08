@@ -3,37 +3,38 @@ import ForceGraph3D from '3d-force-graph'
 
 // Setup graphql query
 
-const default_uuid = "66eeaffc-158c-11e7-803e-0242ac110017"
+function build_graphql_query(uuid="66eeaffc-158c-11e7-803e-0242ac110017") {
 
-var graphql_query = {
-  query: {
-    datasetSpecifications: {
-      __args: {
-        uuid: default_uuid
-      },
-      edges: {
-        node: {
-          name: true,
-          uuid: true,
-          dssdeinclusionSet: {
-            dataElement: {
-              uuid: true,
-              name: true,
-              dataElementConcept: {
+  var graphql_query = {
+    query: {
+      datasetSpecifications: {
+        __args: {
+          uuid: uuid
+        },
+        edges: {
+          node: {
+            name: true,
+            uuid: true,
+            dssdeinclusionSet: {
+              dataElement: {
                 uuid: true,
                 name: true,
-                objectClass: {
+                dataElementConcept: {
                   uuid: true,
-                  name: true
+                  name: true,
+                  objectClass: {
+                    uuid: true,
+                    name: true
+                  },
+                  property: {
+                    uuid: true,
+                    name: true
+                  }
                 },
-                property: {
+                valueDomain: {
                   uuid: true,
                   name: true
                 }
-              },
-              valueDomain: {
-                uuid: true,
-                name: true
               }
             }
           }
@@ -41,32 +42,11 @@ var graphql_query = {
       }
     }
   }
+
+  return jsonToGraphQLQuery(graphql_query)
 }
 
-var text_gql_query = jsonToGraphQLQuery(graphql_query)
-console.log(text_gql_query)
 
-// Set request params
-
-const request_options = {
-  'method': 'GET',
-  'headers': {
-    'Accept': 'application/json',
-  },
-  'mode': 'cors',
-}
-
-// Set url
-
-const base_url = 'https://registry.aristotlemetadata.com/api/graphql/api?raw=true'
-var url = base_url + '&query=' + text_gql_query
-var display_data = {}
-
-// Setup Graph
-
-const graph_elem = document.getElementById('3d-graph')
-var aristotleGraph = ForceGraph3D()(graph_elem);
-var seen_uuids = []
 
 function reset_data() {
   display_data = {
@@ -145,12 +125,41 @@ function dfs(data, superitem) {
 
 // Make request
 
-fetch(url, request_options).then(
-  function(response) {
-    response.json().then(
-      function(data) {
-        reset_data()
-        dfs(data['data'], null)
-    })
+function gql_request() {
+
+  var gql_text_query = build_graphql_query()
+
+  // Set request params
+  const request_options = {
+    'method': 'GET',
+    'headers': {
+      'Accept': 'application/json',
+    },
+    'mode': 'cors',
   }
-);
+
+
+  // Set url
+  const base_url = 'https://registry.aristotlemetadata.com/api/graphql/api?raw=true'
+  var url = base_url + '&query=' + gql_text_query
+
+  fetch(url, request_options).then(
+    function(response) {
+      response.json().then(
+        function(data) {
+          reset_data()
+          dfs(data['data'], null)
+      })
+    }
+  );
+}
+
+
+// Setup Graph
+
+const graph_elem = document.getElementById('3d-graph')
+var aristotleGraph = ForceGraph3D()(graph_elem);
+var display_data = {}
+var seen_uuids = []
+
+gql_request()

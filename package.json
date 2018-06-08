@@ -1,0 +1,28 @@
+{
+  "name": "3d-graph-lab",
+  "version": "1.0.0",
+  "description": "3D Graph Visualisation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aristotle-Metadata-Enterprises/3d-graph-lab.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Aristotle-Metadata-Enterprises/3d-graph-lab/issues"
+  },
+  "homepage": "https://github.com/Aristotle-Metadata-Enterprises/3d-graph-lab#readme",
+  "devDependencies": {
+    "webpack": "^4.11.1",
+    "webpack-cli": "^3.0.3"
+  },
+  "dependencies": {
+    "json-to-graphql-query": "^1.3.0"
+  }
+}

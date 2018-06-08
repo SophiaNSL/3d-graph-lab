@@ -1,7 +1,27 @@
+import jsonToGraphQLQuery from 'json-to-graphql-query'
+
 var default_uuid = "6b5b5d6a-158c-11e7-803e-0242ac110017"
 
-graphql_query = '{ metadata (uuid: \"' + default_uuid + '\") { edges { node { uuid name } } } }',
+// graphql_query = '{ metadata (uuid: \"' + default_uuid + '\") { edges { node { uuid name } } } }',
 base_url = 'https://registry.aristotlemetadata.com/api/graphql/api?raw=true'
+
+graphql_query = {
+  query: {
+    dataElements: {
+      __args: {
+        uuid: default_uuid
+      },
+      edges: {
+        node: {
+          name: true
+        }
+      }
+    }
+  }
+}
+
+text_gql_query = jsonToGraphQLQuery(graqhql_query)
+console.log(text_gql_query)
 
 request_options = {
   'method': 'GET',
@@ -11,7 +31,7 @@ request_options = {
   'mode': 'cors',
 }
 
-url = base_url + '&query=' + graphql_query
+url = base_url + '&query=' + text_gql_query
 
 display_data = {}
 

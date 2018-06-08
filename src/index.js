@@ -8,7 +8,7 @@ function reset_data() {
   }
 }
 
-function add_display_data(node, superitem) {
+function add_display_data(node, superitem, type) {
   // console.log(node)
   
   if ('uuid' in node && 'name' in node) {
@@ -17,7 +17,8 @@ function add_display_data(node, superitem) {
       display_data['nodes'].push({
         'id': node['uuid'],
         'name': node['name'],
-        'val': 1
+        'val': 1,
+        'type': type
       })
       seen_uuids.push(node['uuid'])
     }
@@ -34,7 +35,7 @@ function add_display_data(node, superitem) {
   }
 }
 
-function dfs(data, superitem) {
+function dfs(data, superitem, type) {
   // Depth first search on returned graphql data
   // to build 3d-force-graph data
   // assumes structure is a tree
@@ -53,22 +54,22 @@ function dfs(data, superitem) {
     if (key == 'edges') {
       for (var j=0; j < data['edges'].length; j++) {
         var edge = data['edges'][j]
-        dfs(edge, superitem)
+        dfs(edge, superitem, type)
       }
     } else if (key == 'dssdeinclusionSet') {
       for (var k=0; k < data['dssdeinclusionSet'].length; k++) {
         var item = data['dssdeinclusionSet'][k]
-        dfs(item, superitem)
+        dfs(item, superitem, type)
       }
     } else if (key == 'node') {
       add_display_data(data['node'], superitem)
-      dfs(data['node'], superitem)
+      dfs(data['node'], superitem, type)
     } else {
       var item = data[key]
       // console.log(typeof item)
       if (typeof item == 'object') {
         if (item != null) {
-          add_display_data(item, superitem)
+          add_display_data(item, superitem, key)
           dfs(item, superitem)
         }
       }
@@ -76,14 +77,15 @@ function dfs(data, superitem) {
   }
 }
 
-// Setup Graph
+// Setup Graph and request
 
 const graph_elem = document.getElementById('3d-graph')
 var aristotleGraph = ForceGraph3D()(graph_elem);
+aristotleGraph.nodeAutoColorBy('type')
 var display_data = {}
 var seen_uuids = []
 
 gql_request(function(data) {
   reset_data()
-  dfs(data['data'], null)
+  dfs(data['data'], null, 'root')
 })

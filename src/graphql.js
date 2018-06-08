@@ -1,6 +1,6 @@
 import { jsonToGraphQLQuery } from 'json-to-graphql-query'
 
-function build_graphql_query(uuid="66eeaffc-158c-11e7-803e-0242ac110017") {
+function build_graphql_query(uuid) {
 
   var graphql_query = {
     query: {
@@ -43,9 +43,9 @@ function build_graphql_query(uuid="66eeaffc-158c-11e7-803e-0242ac110017") {
   return jsonToGraphQLQuery(graphql_query)
 }
 
-export function gql_request(callback) {
+export function gql_request(uuid, callback) {
 
-  var gql_text_query = build_graphql_query()
+  var gql_text_query = build_graphql_query(uuid)
 
   // Set request params
   const request_options = {

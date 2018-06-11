@@ -8,7 +8,7 @@
   <body style="text-align:center">
     <div id="vue">
       <h1>{{ display_name }}</h1>
-      <input v-model="uuid_input"></input>
+      <input maxlength="36" size="36" v-model="uuid_input"></input>
       <button v-on:click="request()">Load</button>
     </div>
     <div id="3d-graph" style="width:1280px;margin:auto"></div>

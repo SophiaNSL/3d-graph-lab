@@ -15,7 +15,8 @@ var vm = new Vue({
   data: {
     display_data: {},
     seen_uuids: [],
-    uuid_input: '66eeaffc-158c-11e7-803e-0242ac110017'
+    uuid_input: '66eeaffc-158c-11e7-803e-0242ac110017',
+    display_name: '',
   },
   created: function() {
     this.request()
@@ -27,6 +28,7 @@ var vm = new Vue({
         console.log(data)
         currentvue.reset_data()
         currentvue.dfs(data['data'], null, 'root')
+        currentvue.display_name = data['data']['datasetSpecifications']['edges'][0]['node']['name']
       })
     },
     dfs: function(data, superitem, type) {

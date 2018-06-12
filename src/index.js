@@ -1,14 +1,5 @@
-import ForceGraph3D from '3d-force-graph'
 import Vue from 'vue'
 import { gql_request } from './graphql.js'
-
-// Setup Graph
-const graph_elem = document.getElementById('3d-graph')
-var aristotleGraph = ForceGraph3D()(graph_elem)
-  .nodeAutoColorBy('type')
-  .width(1280)
-  .height(720)
-
 
 var vm = new Vue({
   el: '#vue',
@@ -17,18 +8,21 @@ var vm = new Vue({
     seen_uuids: [],
     uuid_input: '66eeaffc-158c-11e7-803e-0242ac110017',
     display_name: '',
+    loading: true
   },
   created: function() {
-    this.request()
+    this.initGraph()
   },
   methods: {
     request: function() {
+      this.loading = true
       var currentvue = this
       gql_request(currentvue.uuid_input, function(data) {
         console.log(data)
         currentvue.reset_data()
         currentvue.dfs(data['data'], null, 'root')
         currentvue.display_name = data['data']['datasetSpecifications']['edges'][0]['node']['name']
+        currentvue.loading = false
       })
     },
     dfs: function(data, superitem, type) {
@@ -94,7 +88,7 @@ var vm = new Vue({
           })
         }
 
-        aristotleGraph.graphData(this.display_data);
+        this.aristotleGraph.graphData(this.display_data);
 
       }
     },
@@ -104,6 +98,23 @@ var vm = new Vue({
         'links': []
       }
       this.seen_uuids = []
+    },
+    initGraph: function() {
+      this.loading = true
+
+      import(/* webpackChunkName: "3d-force-graph" */ '3d-force-graph').then(tdfg => {
+
+        var ForceGraph3D = tdfg.default
+
+        // Setup Graph
+        var graph_elem = document.getElementById('3d-graph')
+        this.aristotleGraph = ForceGraph3D()(graph_elem)
+          .nodeAutoColorBy('type')
+          .width(1280)
+          .height(720)
+
+        this.request()
+      })
     }
   }
 });

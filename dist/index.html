@@ -8,10 +8,15 @@
   <body style="text-align:center">
     <div id="vue">
       <h1>{{ display_name }}</h1>
-      <input maxlength="36" size="36" v-model="uuid_input"></input>
-      <button v-on:click="request()">Load</button>
+      <template v-if="!loading">
+        <input maxlength="36" size="36" v-model="uuid_input"></input>
+        <button v-on:click="request()">Load</button>
+      </template>
+      <template v-else>
+        <h2>Loading...</h2>
+      </template>
+      <div id="3d-graph" style="width:1280px;margin:auto"></div>
     </div>
-    <div id="3d-graph" style="width:1280px;margin:auto"></div>
     <script src="bundle.js"></script>
   </body>
 

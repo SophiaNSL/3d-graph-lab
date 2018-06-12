@@ -1,3 +1,4 @@
+import './style.css'
 import Vue from 'vue'
 import { gql_request } from './graphql.js'
 

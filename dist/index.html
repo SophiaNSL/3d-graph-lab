@@ -3,11 +3,12 @@
 
   <head>
     <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" href="style.css">
   </head>
 
-  <body style="text-align:center">
+  <body>
     <div id="vue">
-      <h1>{{ display_name }}</h1>
+      <h1 v-cloak>{{ display_name }}</h1>
       <template v-if="!loading">
         <input maxlength="36" size="36" v-model="uuid_input"></input>
         <button v-on:click="request()">Load</button>
@@ -15,7 +16,7 @@
       <template v-else>
         <h2>Loading...</h2>
       </template>
-      <div id="3d-graph" style="width:1280px;margin:auto"></div>
+      <div id="3d-graph" class="tdgraph"></div>
     </div>
     <script src="bundle.js"></script>
   </body>

@@ -6,7 +6,21 @@ body {
   text-align: center
 }
 
+.center {
+  text-align: center;
+  margin: auto;
+}
+
+table {
+  margin: auto
+}
+
 .tdgraph {
   width: 1280px;
   margin: auto;
 }
+
+.errormsg: {
+  color: red
+}
+  

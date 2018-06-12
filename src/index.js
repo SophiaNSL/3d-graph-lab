@@ -8,7 +8,9 @@ var vm = new Vue({
     seen_uuids: [],
     uuid_input: '66eeaffc-158c-11e7-803e-0242ac110017',
     display_name: '',
-    loading: true
+    loading: true,
+    display_info: {},
+    error_message: ''
   },
   mounted: function() {
     this.initGraph()
@@ -18,10 +20,14 @@ var vm = new Vue({
       this.loading = true
       var currentvue = this
       gql_request(currentvue.uuid_input, function(data) {
-        console.log(data)
-        currentvue.reset_data()
-        currentvue.dfs(data['data'], null, 'root')
-        currentvue.display_name = data['data']['datasetSpecifications']['edges'][0]['node']['name']
+        // console.log(data)
+        if ('datasetSpecifications' in data['data']) {
+          currentvue.reset_data()
+          currentvue.dfs(data['data'], null, 'datasetSpecification')
+          currentvue.display_name = data['data']['datasetSpecifications']['edges'][0]['node']['name']
+        } else {
+          currentvue.error_message = "Not a valid Dataset uuid"
+        }
         currentvue.loading = false
       })
     },
@@ -30,7 +36,7 @@ var vm = new Vue({
       // to build 3d-force-graph data
       // assumes structure is a tree
       
-      //console.log(data)
+      // console.log(data)
       var keys = Object.keys(data)
       //console.log(keys)
       
@@ -52,7 +58,7 @@ var vm = new Vue({
             this.dfs(item, superitem, type)
           }
         } else if (key == 'node') {
-          this.add_display_data(data['node'], superitem)
+          this.add_display_data(data['node'], superitem, type)
           this.dfs(data['node'], superitem, type)
         } else {
           var item = data[key]
@@ -60,14 +66,14 @@ var vm = new Vue({
           if (typeof item == 'object') {
             if (item != null) {
               this.add_display_data(item, superitem, key)
-              this.dfs(item, superitem)
+              this.dfs(item, superitem, type)
             }
           }
         }
       }
     },
     add_display_data: function(node, superitem, type) {
-      // console.log(node)
+      console.log(type)
       
       if ('uuid' in node && 'name' in node) {
 
@@ -98,6 +104,8 @@ var vm = new Vue({
         'links': []
       }
       this.seen_uuids = []
+      this.display_info = {}
+      this.error_message = ''
     },
     initGraph: function() {
       this.loading = true
@@ -112,9 +120,25 @@ var vm = new Vue({
           .nodeAutoColorBy('type')
           .width(1280)
           .height(720)
+          .onNodeClick(this.setDisplayInfo)
 
         this.request()
       })
+    },
+    setDisplayInfo: function(node) {
+      var base_url = 'https://registry.aristotlemetadata.com/item/'
+
+      var display_type = node.type
+        // Spaces before caps
+        .replace(/([A-Z])/g, ' $1')
+        // Capitalise first letter
+        .replace(/^./, function(str){ return str.toUpperCase(); })
+
+      this.display_info = {
+        Name: node.name,
+        Type: display_type,
+        Link: base_url + node.id
+      }
     }
   }
 });

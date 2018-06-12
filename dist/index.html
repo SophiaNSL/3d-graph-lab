@@ -8,15 +8,26 @@
 
   <body>
     <div id="vue">
-      <h1 v-cloak>{{ display_name }}</h1>
-      <template v-if="!loading">
+      <template v-cloak v-if="!loading">
+        <h1>{{ display_name }}</h1>
+        <p class="errormsg" v-if="error_message != ''">{{ error_message }}</p>
         <input maxlength="36" size="36" v-model="uuid_input"></input>
         <button v-on:click="request()">Load</button>
       </template>
       <template v-else>
-        <h2>Loading...</h2>
+        <h1>Loading...</h1>
       </template>
       <div id="3d-graph" class="tdgraph"></div>
+      <div id="graph-footer" v-cloak :hidden="loading">
+        <table v-if="Object.keys(display_info).length > 0">
+        <tr v-for="(value, key) in display_info">
+          <th>{{ key }}</th>
+          <td v-if="key=='Link'"><a :href="value" target="_blank">Item Page</a></td>
+          <td v-else>{{ value }}<td>
+        </tr>
+        </table>
+        <p v-else>Click on a node for more info</p>
+      </div>
     </div>
     <script src="bundle.js"></script>
   </body>

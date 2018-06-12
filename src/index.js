@@ -1,3 +1,4 @@
+import './style.css'
 import Vue from 'vue'
 import { gql_request } from './graphql.js'
 
@@ -10,7 +11,7 @@ var vm = new Vue({
     display_name: '',
     loading: true
   },
-  created: function() {
+  mounted: function() {
     this.initGraph()
   },
   methods: {

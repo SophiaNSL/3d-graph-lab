@@ -9,7 +9,7 @@
   <body class="bg-light">
     <div id="vue">
 
-      <div class="container mb-4" id="graph-header">
+      <div class="container mb-4 mt-2" id="graph-header">
         <h1 class="text-center">Dataset Specification Visualisation</h1>
 
         <template v-cloak v-if="!loading">
@@ -51,7 +51,7 @@
                 
                 <div class="list-group" :hidden="search_loading">
                   <div v-for="value in search_results">
-                    <a v-on:click="request_uuid(value.node.uuid)" class="list-group-item" href="#">
+                    <a v-on:click="request_uuid(value.node.uuid)" href="#" class="list-group-item list-group-item-action">
                       {{ value.node.name }}
                     </a>
                   </div>

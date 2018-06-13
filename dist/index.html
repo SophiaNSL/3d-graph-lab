@@ -21,6 +21,20 @@
             </div>
             <button class="btn btn-primary ml-2" v-on:click="request()">Load</button>
           </div>
+          
+          <div class="form-inline justify-content-center mt-3">
+            <div class="form-group">
+              <label>Search:</label>
+              <input type="text" class="form-control ml-2" v-model="search_text"></input>
+            </div>
+            <button class="btn btn-primary ml-2" v-on:click="search()">Search</button>
+          </div>
+
+          <div v-if="Object.keys(search_results).length > 0" :hidden="search_loading">
+            <div v-for="value in search_results">
+              <a v-on:click="request_uuid(value.node.uuid)" href="#">{{ value.node.name }}</a>
+            </div>
+          </div>
 
         </template>
         <template v-else>

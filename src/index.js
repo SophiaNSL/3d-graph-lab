@@ -2,7 +2,7 @@ import './style.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import Vue from 'vue'
-import { gql_request } from './graphql.js'
+import { gql_request, gql_search } from './graphql.js'
 
 var vm = new Vue({
   el: '#vue',
@@ -10,8 +10,11 @@ var vm = new Vue({
     display_data: {},
     seen_uuids: [],
     uuid_input: '66eeaffc-158c-11e7-803e-0242ac110017',
+    search_text: '',
     display_name: '',
     loading: true,
+    search_loading: false,
+    search_results: {},
     display_info: {},
     error_message: ''
   },
@@ -19,6 +22,11 @@ var vm = new Vue({
     this.initGraph()
   },
   methods: {
+    request_uuid: function(uuid) {
+      this.loading = true
+      this.uuid_input = uuid
+      this.request()
+    },
     request: function() {
       this.loading = true
       var currentvue = this
@@ -37,6 +45,21 @@ var vm = new Vue({
         function(error) {
           currentvue.error_message = "Request could not be completed"
           currentvue.loading = false
+        }
+      )
+    },
+    search: function() {
+      this.search_loading = true
+      var cvue = this
+      gql_search(cvue.search_text,
+        function(data) {
+          cvue.search_results = data['data']['datasetSpecifications']['edges']
+          console.log(cvue.search_results)
+          cvue.search_loading = false
+        },
+        function(error) {
+          cvue.search_results = {}
+          cvue.search_loading = false
         }
       )
     },
@@ -115,6 +138,7 @@ var vm = new Vue({
       this.seen_uuids = []
       this.display_info = {}
       this.error_message = ''
+      this.search_results = {}
     },
     initGraph: function() {
       this.loading = true

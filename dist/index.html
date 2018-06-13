@@ -12,7 +12,7 @@
       <div class="container text-center mb-4" id="graph-header">
         <template v-cloak v-if="!loading">
           <h1>{{ display_name }}</h1>
-          <p class="errormsg" v-if="error_message != ''">{{ error_message }}</p>
+          <div class="alert alert-danger" v-if="error_message != ''">{{ error_message }}</div>
 
           <div class="form-inline justify-content-center mt-3">
             <div class="form-group">
@@ -28,14 +28,18 @@
         </template>
       </div>
 
-      <div id="3d-graph" class="tdgraph mt-4"></div>
+      <div id="3d-graph" class="tdgraph"></div>
 
-      <div class="container text-center" id="graph-footer" v-cloak :hidden="loading">
-        <table class="table" v-if="Object.keys(display_info).length > 0">
+      <div class="container text-center mt-4" id="graph-footer" v-cloak :hidden="loading">
+        <table class="table table-bordered table-sm" v-if="Object.keys(display_info).length > 0">
         <tr v-for="(value, key) in display_info">
           <th>{{ key }}</th>
-          <td v-if="key=='Link'"><a :href="value" target="_blank">Item Page</a></td>
-          <td v-else>{{ value }}<td>
+          <td>
+            <template v-if="key=='Link'">
+              <a :href="value" target="_blank">Item Page</a>
+            </template>
+            <template v-else>{{ value }}</template>
+          </td>
         </tr>
         </table>
         <p v-else>Click on a node for more info</p>

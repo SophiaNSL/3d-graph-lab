@@ -22,17 +22,23 @@ var vm = new Vue({
     request: function() {
       this.loading = true
       var currentvue = this
-      gql_request(currentvue.uuid_input, function(data) {
-        // console.log(data)
-        if ('datasetSpecifications' in data['data']) {
-          currentvue.reset_data()
-          currentvue.dfs(data['data'], null, 'datasetSpecification')
-          currentvue.display_name = data['data']['datasetSpecifications']['edges'][0]['node']['name']
-        } else {
-          currentvue.error_message = "Not a valid Dataset uuid"
+      gql_request(currentvue.uuid_input, 
+        function(data) {
+          // console.log(data)
+          if ('datasetSpecifications' in data['data']) {
+            currentvue.reset_data()
+            currentvue.dfs(data['data'], null, 'datasetSpecification')
+            currentvue.display_name = data['data']['datasetSpecifications']['edges'][0]['node']['name']
+          } else {
+            currentvue.error_message = "Not a valid Dataset UUID"
+          }
+          currentvue.loading = false
+        },
+        function(error) {
+          currentvue.error_message = "Request could not be completed"
+          currentvue.loading = false
         }
-        currentvue.loading = false
-      })
+      )
     },
     dfs: function(data, superitem, type) {
       // Depth first search on returned graphql data

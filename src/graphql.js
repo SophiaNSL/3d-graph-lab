@@ -43,7 +43,7 @@ function build_graphql_query(uuid) {
   return jsonToGraphQLQuery(graphql_query)
 }
 
-export function gql_request(uuid, callback) {
+export function gql_request(uuid, callback, error_callback) {
 
   var gql_text_query = build_graphql_query(uuid)
 
@@ -60,13 +60,18 @@ export function gql_request(uuid, callback) {
   const base_url = 'https://registry.aristotlemetadata.com/api/graphql/api?raw=true'
   var url = base_url + '&query=' + gql_text_query
 
-  fetch(url, request_options).then(
-    function(response) {
-      response.json().then(
-        function(data) {
-          callback(data)
-      })
-    }
-  );
+  fetch(url, request_options)
+    .then(
+      function(response) {
+        if (response.status != 200) {
+          error_callback(response.status)
+        } else {
+          response.json()
+            .then(callback)
+            .catch(error_callback)
+        }
+      }
+    )
+    .catch(error_callback)
 }
 

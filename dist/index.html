@@ -3,21 +3,27 @@
 
   <head>
     <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   </head>
 
   <body>
     <div id="vue">
-      <template v-cloak v-if="!loading">
-        <h1>{{ display_name }}</h1>
-        <p class="errormsg" v-if="error_message != ''">{{ error_message }}</p>
-        <input maxlength="36" size="36" v-model="uuid_input"></input>
-        <button v-on:click="request()">Load</button>
-      </template>
-      <template v-else>
-        <h1>Loading...</h1>
-      </template>
+
+      <div class="container text-center" id="graph-header">
+        <template v-cloak v-if="!loading">
+          <h1>{{ display_name }}</h1>
+          <p class="errormsg" v-if="error_message != ''">{{ error_message }}</p>
+          <input maxlength="36" size="36" v-model="uuid_input"></input>
+          <button v-on:click="request()">Load</button>
+        </template>
+        <template v-else>
+          <h1>Loading...</h1>
+        </template>
+      </div>
+
       <div id="3d-graph" class="tdgraph"></div>
-      <div id="graph-footer" v-cloak :hidden="loading">
+
+      <div class="container text-center" id="graph-footer" v-cloak :hidden="loading">
         <table v-if="Object.keys(display_info).length > 0">
         <tr v-for="(value, key) in display_info">
           <th>{{ key }}</th>
@@ -27,6 +33,7 @@
         </table>
         <p v-else>Click on a node for more info</p>
       </div>
+
     </div>
     <script src="bundle.js"></script>
   </body>

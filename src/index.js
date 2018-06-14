@@ -15,6 +15,7 @@ var vm = new Vue({
     loading: true,
     search_loading: false,
     search_results: {},
+    search_display: false,
     display_info: {},
     error_message: ''
   },
@@ -50,6 +51,7 @@ var vm = new Vue({
     },
     search: function() {
       this.search_loading = true
+      this.search_display = true
       var cvue = this
       gql_search(cvue.search_text,
         function(data) {

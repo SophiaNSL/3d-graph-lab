@@ -10,3 +10,8 @@ table {
   width: 1280px;
   margin: auto;
 }
+
+.above {
+  position: absolute;
+  z-index: 1200;
+}

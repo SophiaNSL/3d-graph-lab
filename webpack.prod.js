@@ -1,27 +1,6 @@
-const path = require('path');
+const merge = require('webpack-merge');
+const common = require('./webpack.common.js');
 
-module.exports = {
-  entry: './src/index.js',
-  output: {
-    filename: 'bundle.js',
-    chunkFilename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist')
-  },
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: [
-          'style-loader',
-          'css-loader'
-        ]
-      }
-    ]
-  },
+module.exports = merge(common, {
   mode: 'production',
-  resolve: {
-    alias: {
-      'vue$': 'vue/dist/vue.esm.js'
-    }
-  }
-};
+});

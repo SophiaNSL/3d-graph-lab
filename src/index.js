@@ -65,6 +65,16 @@ var vm = new Vue({
         }
       )
     },
+    searchHide: function(event) {
+      if (event.relatedTarget != null) {
+        if (!event.relatedTarget.classList.includes('list-group-item')) {
+          this.search_display=false
+        }
+      } else {
+        this.search_display=false
+      }
+      console.log(event.relatedTarget)
+    },
     dfs: function(data, superitem, type) {
       // Depth first search on returned graphql data
       // to build 3d-force-graph data

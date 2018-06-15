@@ -78,6 +78,7 @@ var vm = new Vue({
       this.search_results = {}
       this.search_loading = true
       this.search_display = true
+      this.error_message = ''
       var cvue = this
       gql_search(
         this.baseurl,
@@ -89,6 +90,7 @@ var vm = new Vue({
         function(error) {
           cvue.search_results = {}
           cvue.search_loading = false
+          cvue.error_message = "Search could not be completed"
         }
       )
     },

@@ -10,6 +10,7 @@ var vm = new Vue({
     display_data: {},
     seen_uuids: [],
     uuid_input: '66eeaffc-158c-11e7-803e-0242ac110017',
+    baseurl: 'registry.aristotlemetadata.com',
     search_text: '',
     display_name: '',
     loading: true,
@@ -24,14 +25,18 @@ var vm = new Vue({
   },
   methods: {
     request_uuid: function(uuid) {
+      // Request a dss by uuid and display it
       this.loading = true
       this.uuid_input = uuid
       this.request()
     },
     request: function() {
+      // Request the current uuid and display it if successfull
       this.loading = true
       var currentvue = this
-      gql_request(currentvue.uuid_input, 
+      gql_request(
+        this.baseurl,
+        currentvue.uuid_input, 
         function(data) {
           // console.log(data)
           if ('datasetSpecifications' in data['data']) {
@@ -50,11 +55,14 @@ var vm = new Vue({
       )
     },
     search: function() {
+      // Perform a search request and display results
       this.search_results = {}
       this.search_loading = true
       this.search_display = true
       var cvue = this
-      gql_search(cvue.search_text,
+      gql_search(
+        this.baseurl,
+        cvue.search_text,
         function(data) {
           cvue.search_results = data['data']['datasetSpecifications']['edges']
           cvue.search_loading = false
@@ -66,6 +74,7 @@ var vm = new Vue({
       )
     },
     searchHide: function(event) {
+      // Hide the search results on focusout
       console.log(event.relatedTarget)
       if (event.relatedTarget != null) {
         if (!event.relatedTarget.classList.contains('list-group-item')) {
@@ -76,8 +85,9 @@ var vm = new Vue({
       }
     },
     searchKey: function(event) {
+      // Search box on keyup
       if (event.keyCode == 13) {
-        var button= document.getElementById('searchButton')
+        var button = document.getElementById('searchButton')
         button.focus()
         button.click()
       }
@@ -124,7 +134,7 @@ var vm = new Vue({
       }
     },
     add_display_data: function(node, superitem, type) {
-      console.log(type)
+      // Adds data returned by dfs to the graph
       
       if ('uuid' in node && 'name' in node) {
 
@@ -150,6 +160,7 @@ var vm = new Vue({
       }
     },
     reset_data: function() {
+      // Reset the data, used on new load
       this.display_data = {
         'nodes': [],
         'links': []
@@ -158,8 +169,10 @@ var vm = new Vue({
       this.display_info = {}
       this.error_message = ''
       this.search_results = {}
+      this.search_display = false
     },
     initGraph: function() {
+      // Initialise the graph
       this.loading = true
 
       import(/* webpackChunkName: "3d-force-graph" */ '3d-force-graph').then(tdfg => {
@@ -178,7 +191,8 @@ var vm = new Vue({
       })
     },
     setDisplayInfo: function(node) {
-      var base_url = 'https://registry.aristotlemetadata.com/item/'
+      // Set the display info (runs on node click)
+      var full_url = 'https://' + this.baseurl + '/item/'
 
       var display_type = node.type
         // Spaces before caps
@@ -189,7 +203,7 @@ var vm = new Vue({
       this.display_info = {
         Name: node.name,
         Type: display_type,
-        Link: base_url + node.id
+        Link: full_url + node.id
       }
     }
   }

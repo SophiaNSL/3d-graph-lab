@@ -20,13 +20,12 @@ var vm = new Vue({
     display_info: {},
     error_message: '',
     colormap: {
-      // from clrs.cc
-      datasetSpecification: '#FF4136',
-      dataElement: '#0074D9',
-      dataElementConcept: '#2ECC40',
-      objectClass: '#FFDC00',
-      valueDomain: '#7FDBFF',
-      property: '#B10DC9'
+      datasetSpecification: '#a6cee3',
+      dataElement: '#1f78b4',
+      dataElementConcept: '#b2df8a',
+      objectClass: '#33a02c',
+      valueDomain: '#e31a1c',
+      property: '#fb9a99'
     }
   },
   mounted: function() {
@@ -169,7 +168,7 @@ var vm = new Vue({
 
           var nodecolor = this.colormap[type]
           if (nodecolor != undefined) {
-            nodeobj.color = nodecolor
+            //nodeobj.color = nodecolor
           }
 
 

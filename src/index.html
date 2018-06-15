@@ -49,7 +49,7 @@
               <div class="col-3"></div>
               <div class="col-4">
                 
-                <div id="searchResults" class="above list-group" :hidden="!search_display">
+                <div id="searchResults" class="above w-90 list-group" :hidden="!search_display">
                   <template v-if="Object.keys(search_results).length > 0">
                     <div v-for="value in search_results">
                       <a v-on:click="request_uuid(value.node.uuid)" href="#" class="list-group-item list-group-item-action">

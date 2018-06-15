@@ -11,6 +11,10 @@ table {
   margin: auto;
 }
 
+.w-90 {
+  width: 90%
+}
+
 .above {
   position: absolute;
   z-index: 1200;

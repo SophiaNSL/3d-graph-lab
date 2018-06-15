@@ -66,14 +66,14 @@ var vm = new Vue({
       )
     },
     searchHide: function(event) {
+      console.log(event.relatedTarget)
       if (event.relatedTarget != null) {
-        if (!event.relatedTarget.classList.includes('list-group-item')) {
+        if (!event.relatedTarget.classList.contains('list-group-item')) {
           this.search_display=false
         }
       } else {
         this.search_display=false
       }
-      console.log(event.relatedTarget)
     },
     searchKey: function(event) {
       if (event.keyCode == 13) {

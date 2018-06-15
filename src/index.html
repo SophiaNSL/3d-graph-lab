@@ -41,7 +41,7 @@
                   <input type="text" class="form-control" v-on:keyup="searchKey" v-model="search_text"></input>
                 </div>
                 <div class="col-2">
-                  <button id="searchButton" class="btn btn-primary" v-on:click="search()" v-on:blur="searchHide">Search</button>
+                  <button id="searchButton" class="btn btn-primary" v-on:click="search()" v-on:focusout="searchHide">Search</button>
                 </div>
             </div>
 

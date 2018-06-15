@@ -18,10 +18,29 @@ var vm = new Vue({
     search_results: {},
     search_display: false,
     display_info: {},
-    error_message: ''
+    error_message: '',
+    colormap: {
+      // from clrs.cc
+      datasetSpecification: '#FF4136',
+      dataElement: '#0074D9',
+      dataElementConcept: '#2ECC40',
+      objectClass: '#FFDC00',
+      valueDomain: '#7FDBFF',
+      property: '#B10DC9'
+    }
   },
   mounted: function() {
     this.initGraph()
+  },
+  computed: {
+    prettymap: function() {
+      var pmap = {}
+      for (var key in this.colormap) {
+        var newkey = this.uncamel(key)
+        pmap[newkey] = this.colormap[key]
+      }
+      return pmap
+    }
   },
   methods: {
     request_uuid: function(uuid) {
@@ -75,7 +94,6 @@ var vm = new Vue({
     },
     searchHide: function(event) {
       // Hide the search results on focusout
-      console.log(event.relatedTarget)
       if (event.relatedTarget != null) {
         if (!event.relatedTarget.classList.contains('list-group-item')) {
           this.search_display=false
@@ -139,12 +157,21 @@ var vm = new Vue({
       if ('uuid' in node && 'name' in node) {
 
         if (!this.seen_uuids.includes(node['uuid'])) {
-          this.display_data['nodes'].push({
+
+          var nodeobj = {
             'id': node['uuid'],
             'name': node['name'],
             'val': 1,
             'type': type
-          })
+          }
+
+          var nodecolor = this.colormap[type]
+          if (nodecolor != undefined) {
+            nodeobj.color = nodecolor
+          }
+
+
+          this.display_data['nodes'].push(nodeobj)
           this.seen_uuids.push(node['uuid'])
         }
         
@@ -194,17 +221,22 @@ var vm = new Vue({
       // Set the display info (runs on node click)
       var full_url = 'https://' + this.baseurl + '/item/'
 
-      var display_type = node.type
-        // Spaces before caps
-        .replace(/([A-Z])/g, ' $1')
-        // Capitalise first letter
-        .replace(/^./, function(str){ return str.toUpperCase(); })
+      var display_type = this.uncamel(node.type)
 
       this.display_info = {
         Name: node.name,
         Type: display_type,
         Link: full_url + node.id
       }
+    },
+    uncamel: function(text) {
+      var display_text = text
+        // Spaces before caps
+        .replace(/([A-Z])/g, ' $1')
+        // Capitalise first letter
+        .replace(/^./, function(str){ return str.toUpperCase(); })
+
+      return display_text
     }
   }
 });

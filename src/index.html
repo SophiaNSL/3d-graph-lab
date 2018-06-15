@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link href="main.css" rel="stylesheet"></head>
+  </head>
 
   <body class="bg-light">
     <div id="vue">
@@ -15,14 +15,25 @@
         <template v-cloak v-if="!loading">
 
           <div class="container" >
-            <div class="row">
+            <div class="row justify-content-center">
               <div class="col-4">
                 <div class="alert alert-danger" v-if="error_message != ''">{{ error_message }}</div>
               </div>
             </div>
 
             <div class="form-row justify-content-center mt-4">
-                <div class="col-3">
+                <div class="col-3 col-form-label text-right">
+                  <label>Metadata Registry URL:</label>
+                </div>
+                <div class="col-4">
+                  <input type="text" class="form-control" v-model="baseurl"></input>
+                </div>
+                <div class="col-2">
+                </div>
+            </div>
+
+            <div class="form-row justify-content-center mt-2">
+                <div class="col-3 col-form-label text-right">
                   <label>Dataset Specification UUID:</label>
                 </div>
                 <div class="col-4">
@@ -34,14 +45,14 @@
             </div>
 
             <div class="form-row justify-content-center mt-2">
-                <div class="col-3">
+                <div class="col-3 col-form-label text-right pb-0">
                   <label>Search:</label>
                 </div>
                 <div class="col-4">
-                  <input type="text" class="form-control" v-model="search_text"></input>
+                  <input type="text" class="form-control" v-on:keyup="searchKey" v-model="search_text"></input>
                 </div>
                 <div class="col-2">
-                  <button id="searchButton" class="btn btn-primary" v-on:click="search()" v-on:blur="searchHide">Search</button>
+                  <button id="searchButton" class="btn btn-primary" v-on:click="search()" v-on:focusout="searchHide">Search</button>
                 </div>
             </div>
 
@@ -49,11 +60,17 @@
               <div class="col-3"></div>
               <div class="col-4">
                 
-                <div id="searchResults" class="above list-group" :hidden="!search_display">
-                  <div v-for="value in search_results">
-                    <a v-on:click="request_uuid(value.node.uuid)" href="#" class="list-group-item list-group-item-action">
-                      {{ value.node.name }}
-                    </a>
+                <div id="searchResults" class="above w-90 list-group" :hidden="!search_display">
+                  <template v-if="Object.keys(search_results).length > 0">
+                    <div v-for="value in search_results">
+                      <a v-on:click="request_uuid(value.node.uuid)" href="#" class="list-group-item list-group-item-action">
+                        {{ value.node.name }}
+                      </a>
+                    </div>
+                  </template>
+                  <div v-else> 
+                    <p v-if="search_loading" class="list-group-item">Searching...</p>
+                    <p v-else class="list-group-item">No Results</p>
                   </div>
                 </div>
 
@@ -72,6 +89,13 @@
       <div id="3d-graph" class="tdgraph"></div>
 
       <div class="container text-center" id="graph-footer" v-cloak :hidden="loading">
+        <div id="colorkey">
+          <ul class="list-inline">
+            <li class="list-inline-item" v-for="(value, key) in prettymap">
+              <span class="smallbox" :style="{backgroundColor: value}"></span>{{ key }}
+            </li>
+          </ul>
+        </div>
         <div class="row justify-content-center">
           <div class="col-4">
 
@@ -93,6 +117,6 @@
       </div>
 
     </div>
-  <script type="text/javascript" src="bundle.js"></script></body>
+  </body>
 
 </html>

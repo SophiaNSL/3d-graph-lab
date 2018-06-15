@@ -50,13 +50,13 @@ var vm = new Vue({
       )
     },
     search: function() {
+      this.search_results = {}
       this.search_loading = true
       this.search_display = true
       var cvue = this
       gql_search(cvue.search_text,
         function(data) {
           cvue.search_results = data['data']['datasetSpecifications']['edges']
-          console.log(cvue.search_results)
           cvue.search_loading = false
         },
         function(error) {
@@ -74,6 +74,13 @@ var vm = new Vue({
         this.search_display=false
       }
       console.log(event.relatedTarget)
+    },
+    searchKey: function(event) {
+      if (event.keyCode == 13) {
+        var button= document.getElementById('searchButton')
+        button.focus()
+        button.click()
+      }
     },
     dfs: function(data, superitem, type) {
       // Depth first search on returned graphql data

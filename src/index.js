@@ -20,11 +20,11 @@ var vm = new Vue({
     display_info: {},
     error_message: '',
     colormap: {
-      datasetSpecification: '#a6cee3',
+      datasetSpecification: '#e31a1c',
       dataElement: '#1f78b4',
       dataElementConcept: '#b2df8a',
       objectClass: '#33a02c',
-      valueDomain: '#e31a1c',
+      valueDomain: '#a6cee3',
       property: '#fb9a99'
     }
   },
@@ -168,7 +168,7 @@ var vm = new Vue({
 
           var nodecolor = this.colormap[type]
           if (nodecolor != undefined) {
-            //nodeobj.color = nodecolor
+            nodeobj.color = nodecolor
           }
 
 

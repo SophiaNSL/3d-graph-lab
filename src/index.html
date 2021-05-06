@@ -72,7 +72,7 @@
         </div>
         <div class="row justify-content-center mb-4">
             <div class="col-4 offset-4">
-                <div id="searchResults" class="above w-90" :hidden="!searchDisplay">
+                <div id="searchResults" class="search-results" :hidden="!searchDisplay">
                     <div class="list-group">
                         <a v-for="value in searchResults"
                            class="list-group-item list-group-item-action p-2"
@@ -106,7 +106,7 @@
             <div id="colorkey" class="mt-2 mb-5">
                 <ul class="list-inline">
                     <li class="list-inline-item" v-for="(value, key) in prettyMap">
-                        <span class="smallbox" :style="{backgroundColor: value}"></span>{{ key }}
+                        <span class="small-box" :style="{backgroundColor: value}"></span>{{ key }}
                     </li>
                 </ul>
             </div>

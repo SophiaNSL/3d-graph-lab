@@ -4,121 +4,127 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Dataset Specification Visualisation</title>
+    <title>Visualisation tool for Data Set Specifications & Distributions</title>
 <link href="main.css" rel="stylesheet"></head>
 
 <body class="bg-light">
-<div id="vue">
-    <div class="container mb-4 mt-2" id="graph-header">
-        <h1 class="text-center">Dataset Specification Visualisation</h1>
-        <template v-cloak v-if="!loading">
-            <div class="container" >
-                <div class="row justify-content-center">
-                    <div class="col-4">
-                        <div class="alert alert-danger" v-if="errorMessage !== ''">{{ errorMessage }}</div>
-                    </div>
-                </div>
-
-                <div class="form-row justify-content-center mt-4">
-                    <div class="col-3 col-form-label text-right">
-                        <label>Metadata Registry URL:</label>
-                    </div>
-                    <div class="col-4">
-                        <input type="text" class="form-control" v-model="baseurl">
-                    </div>
-                    <div class="col-2">
-                    </div>
-                </div>
-
-                <div class="form-row justify-content-center mt-2">
-                    <div class="col-3 col-form-label text-right">
-                        <label>API Token:</label>
-                    </div>
-                    <div class="col-4">
-                        <input :type="apiTokenInputType" class="form-control" v-model="apiToken">
-                    </div>
-                    <div class="col-2">
-                        <button class="btn btn-outline-primary btn-block" @click="showToken">{{ apiTokenButtonText }}</button>
-                    </div>
-                </div>
-
-                <div class="form-row justify-content-center mt-2">
-                    <div class="col-3 col-form-label text-right">
-                        <label>Dataset Specification UUID:</label>
-                    </div>
-                    <div class="col-4">
-                        <input type="text" class="form-control" maxlength="36" v-model="uuidInput">
-                    </div>
-                    <div class="col-2">
-                        <button class="btn btn-outline-primary btn-block" v-on:click="request">Load</button>
-                    </div>
-                </div>
-
-                <div class="form-row justify-content-center mt-2">
-                    <div class="col-3 col-form-label text-right pb-0">
-                        <label>Search:</label>
-                    </div>
-                    <div class="col-4">
-                        <input type="text" class="form-control" v-on:keyup="searchKey" v-model="searchText">
-                    </div>
-                    <div class="col-2">
-                        <button id="searchButton" class="btn btn-outline-primary btn-block" v-on:click="search" v-on:focusout="searchHide">Search</button>
-                    </div>
-                </div>
-
-                <div class="row justify-content-center mb-4">
-                    <div class="col-3"></div>
-                    <div class="col-4">
-
-                        <div id="searchResults" class="above w-90 list-group" :hidden="!searchDisplay">
-                            <template v-if="Object.keys(searchResults).length > 0">
-                                <div v-for="value in searchResults">
-                                    <a v-on:click="requestUuid(value.node.uuid)" href="#" class="list-group-item list-group-item-action">
-                                        {{ value.node.name }}
-                                    </a>
-                                </div>
-                            </template>
-                            <div v-else>
-                                <p v-if="searchLoading" class="list-group-item">Searching...</p>
-                                <p v-else class="list-group-item">No Results</p>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="col-2"></div>
-                </div>
-                <h2 class="text-center">{{ displayName }}</h2>
+<div id="vue" class="container">
+    <div class="mb-4 mt-2" id="graph-header">
+        <h1 class="text-center">Visualisation tool for Data Set Specifications & Distributions</h1>
+        <div class="form-row justify-content-center mt-4">
+            <div class="col-4 col-form-label text-right">
+                <label>Metadata Registry URL:</label>
             </div>
+            <div class="col-4">
+                <input type="text" class="form-control" v-model="baseurl" :placeholder="placeHolder">
+            </div>
+            <div class="col-4">
+            </div>
+        </div>
+
+        <div class="form-row justify-content-center mt-2">
+            <div class="col-4 col-form-label text-right">
+                <label>API Token:</label>
+            </div>
+            <div class="col-4">
+                <input :type="apiTokenInputType" class="form-control" v-model="apiToken">
+            </div>
+            <div class="col-2">
+                <button v-if="apiToken" class="btn btn-outline-primary btn-block" @click="showToken">
+                    {{ apiTokenButtonText }}
+                </button>
+            </div>
+            <div class="col-2">
+            </div>
+        </div>
+        <div class="form-row justify-content-center mt-2">
+            <div class="col-4 col-form-label text-right">
+                <label>Item UUID:</label>
+            </div>
+            <div class="col-4">
+                <input type="text" class="form-control" maxlength="36" v-model="uuidInput">
+            </div>
+            <div class="col-2">
+                <button class="btn btn-outline-primary btn-block" @click="request">Load</button>
+            </div>
+            <div class="col-2">
+            </div>
+        </div>
+        <div class="form-row justify-content-center mt-2">
+            <div class="col-4 col-form-label text-right pb-0">
+                <label>Search:</label>
+            </div>
+            <div class="col-4">
+                <input type="text" class="form-control" @keyup="searchKey" v-model="searchText">
+            </div>
+            <div class="col-2">
+                <button
+                    id="searchButton"
+                    class="btn btn-outline-primary btn-block"
+                    @click="search"
+                    @focusout="searchHide"
+                >
+                    Search
+                </button>
+            </div>
+            <div class="col-2">
+            </div>
+        </div>
+        <div class="row justify-content-center mb-4">
+            <div class="col-4 offset-4">
+                <div id="searchResults" class="above w-90" :hidden="!searchDisplay">
+                    <div class="list-group">
+                        <a v-for="value in searchResults"
+                           class="list-group-item list-group-item-action p-2"
+                           @click="requestUuid(value.node)" href="#"
+                        >
+                            <small>{{ getDropdownText(value.node) }}</small>
+                        </a>
+                        <a v-if="searchLoading" class="list-group-item p-2">Searching...</a>
+                        <a v-else-if="!searchResults.length" class="list-group-item p-2">No Results</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4"></div>
+        </div>
+        <template v-cloak v-if="!loading">
+            <div class="row justify-content-center">
+                <div class="col-4">
+                    <div class="alert alert-danger" v-if="errorMessage !== ''">{{ errorMessage }}</div>
+                </div>
+            </div>
+            <h2 class="text-center">{{ displayName }} ({{ displayType }})</h2>
         </template>
         <template v-else>
             <h2 class="text-center">Loading...</h2>
         </template>
+
+        <div id="3d-graph"></div>
     </div>
-
-    <div id="3d-graph" class="tdgraph"></div>
-
-    <div class="container text-center" id="graph-footer" v-cloak :hidden="loading">
-        <div id="colorkey">
-            <ul class="list-inline">
-                <li class="list-inline-item" v-for="(value, key) in prettyMap">
-                    <span class="smallbox" :style="{backgroundColor: value}"></span>{{ key }}
-                </li>
-            </ul>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-4">
-                <table class="table table-bordered table-sm" v-if="Object.keys(displayInfo).length > 0">
-                    <tr v-for="(value, key) in displayInfo">
-                        <th>{{ key }}</th>
-                        <td>
-                            <template v-if="key==='Link'">
-                                <a :href="value" target="_blank">Item Page</a>
-                            </template>
-                            <template v-else>{{ value }}</template>
-                        </td>
-                    </tr>
-                </table>
-                <p v-else>Click on a node for more info</p>
+    <div :hidden="loading">
+        <div class="text-center pb-5 mb-5" id="graph-footer" v-cloak>
+            <div id="colorkey" class="mt-2 mb-5">
+                <ul class="list-inline">
+                    <li class="list-inline-item" v-for="(value, key) in prettyMap">
+                        <span class="smallbox" :style="{backgroundColor: value}"></span>{{ key }}
+                    </li>
+                </ul>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-8">
+                    <table class="table table-bordered table-sm" v-if="Object.keys(displayInfo).length > 0">
+                        <tr v-for="(value, key) in displayInfo">
+                            <th class="w-25">{{ key }}</th>
+                            <td>
+                                <template v-if="key==='Link'">
+                                    <a :href="value" target="_blank">Item Page</a>
+                                </template>
+                                <template v-else>{{ value }}</template>
+                            </td>
+                        </tr>
+                    </table>
+                    <p v-else>Click on a node for more info</p>
+                </div>
             </div>
         </div>
     </div>

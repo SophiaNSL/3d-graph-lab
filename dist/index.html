@@ -12,53 +12,52 @@
     <div class="mb-4 mt-2" id="graph-header">
         <h1 class="text-center">Visualisation tool for Data Set Specifications & Distributions</h1>
         <div class="form-row justify-content-center mt-4">
-            <div class="col-4 col-form-label text-right">
+            <div class="col-md-3 col-form-label text-md-right">
                 <label>Metadata Registry URL:</label>
             </div>
-            <div class="col-4">
+            <div class="col-md-6">
                 <input type="text" class="form-control" v-model="baseurl" :placeholder="placeHolder">
             </div>
-            <div class="col-4">
+            <div class="col-md-3">
             </div>
         </div>
 
         <div class="form-row justify-content-center mt-2">
-            <div class="col-4 col-form-label text-right">
+            <div class="col-md-3 col-form-label text-md-right">
                 <label>API Token:</label>
             </div>
-            <div class="col-4">
+            <div class="col-md-6">
                 <input :type="apiTokenInputType" class="form-control" v-model="apiToken">
             </div>
-            <div class="col-2">
+            <div class="col-md-3">
                 <button v-if="apiToken" class="btn btn-outline-primary btn-block" @click="showToken">
                     {{ apiTokenButtonText }}
                 </button>
             </div>
-            <div class="col-2">
-            </div>
         </div>
         <div class="form-row justify-content-center mt-2">
-            <div class="col-4 col-form-label text-right">
+            <div class="col-md-3 col-form-label text-md-right">
                 <label>Item UUID:</label>
             </div>
-            <div class="col-4">
+            <div class="col-md-6">
                 <input type="text" class="form-control" maxlength="36" v-model="uuidInput">
             </div>
-            <div class="col-2">
-                <button class="btn btn-outline-primary btn-block" @click="request">Load</button>
-            </div>
-            <div class="col-2">
+            <div class="col-md-3">
+                <button v-if="baseurl && uuidInput" class="btn btn-outline-primary btn-block" @click="request">
+                    Load
+                </button>
             </div>
         </div>
         <div class="form-row justify-content-center mt-2">
-            <div class="col-4 col-form-label text-right pb-0">
+            <div class="col-md-3 col-form-label text-md-right pb-0">
                 <label>Search:</label>
             </div>
-            <div class="col-4">
+            <div class="col-md-6">
                 <input type="text" class="form-control" @keyup="searchKey" v-model="searchText">
             </div>
-            <div class="col-2">
+            <div class="col-md-3">
                 <button
+                    v-if="baseurl"
                     id="searchButton"
                     class="btn btn-outline-primary btn-block"
                     @click="search"
@@ -67,11 +66,9 @@
                     Search
                 </button>
             </div>
-            <div class="col-2">
-            </div>
         </div>
         <div class="row justify-content-center mb-4">
-            <div class="col-4 offset-4">
+            <div class="col-md-4 offset-md-4">
                 <div id="searchResults" class="search-results" :hidden="!searchDisplay">
                     <div class="list-group">
                         <a v-for="value in searchResults"
@@ -85,11 +82,11 @@
                     </div>
                 </div>
             </div>
-            <div class="col-4"></div>
+            <div class="col-md-4"></div>
         </div>
         <template v-cloak v-if="!loading">
             <div class="row justify-content-center">
-                <div class="col-4">
+                <div class="col-md-4">
                     <div class="alert alert-danger" v-if="errorMessage !== ''">{{ errorMessage }}</div>
                 </div>
             </div>

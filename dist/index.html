@@ -10,7 +10,7 @@
 <body class="bg-light">
 <div id="vue" class="container">
     <div class="mb-4 mt-2" id="graph-header">
-        <h1 class="text-center">Visualisation tool for Data Set Specifications & Distributions</h1>
+        <h1 class="text-center mt-4 mb-4">Visualisation tool for Data Set Specifications & Distributions</h1>
         <div class="form-row justify-content-center mt-4">
             <div class="col-md-3 col-form-label text-md-right">
                 <label>Metadata Registry URL:</label>
@@ -67,9 +67,9 @@
                 </button>
             </div>
         </div>
-        <div class="row justify-content-center mb-4">
-            <div class="col-md-4 offset-md-4">
-                <div id="searchResults" class="search-results" :hidden="!searchDisplay">
+        <div class="form-row justify-content-center mb-4">
+            <div class="col-md-6 col-md-offset-3">
+                <div id="searchResults" class="search-results w-100" :hidden="!searchDisplay">
                     <div class="list-group">
                         <a v-for="value in searchResults"
                            class="list-group-item list-group-item-action p-2"
@@ -82,7 +82,6 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4"></div>
         </div>
         <template v-cloak v-if="!loading">
             <div class="row justify-content-center">

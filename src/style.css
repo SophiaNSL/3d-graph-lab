@@ -2,14 +2,9 @@
     display: none
 }
 
-table {
-    margin: auto
-}
-
 .search-results {
-    width: 90%;
-    position: absolute;
     z-index: 1200;
+    position: absolute;
 }
 
 .small-box {

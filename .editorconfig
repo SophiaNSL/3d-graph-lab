@@ -1,0 +1,33 @@
+# https://EditorConfig.org
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8
+# indent by 4 spaces unless changed below
+indent_style = space
+indent_size = 4
+
+# indent by 2 on data files
+[*.{json,yaml,yml}]
+indent_size = 2
+
+[*.md]
+# Disable trim since trailing whitespace can have meaning in md
+trim_trailing_whitespace = false
+
+# Makefiles require tabs
+[Makefile]
+indent_style = tab
+
+# Minified files should not be changed
+[*.min.{js,html,css}]
+insert_final_newline = false
+trim_trailing_whitespace = false
+
+# Vendor files should not be changed
+[**/vendor/**]
+insert_final_newline = false
+trim_trailing_whitespace = false

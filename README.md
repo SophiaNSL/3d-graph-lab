@@ -10,4 +10,4 @@ See the [demo][demo] for an example using the aristotle registry.
 - Run dev server `npm run start`
 - Build dist files `npm run build`
 
-[demo]: https://aristotle3d.netlify.app/
+[demo]: https://aristotle-3d-graph.netlify.app/

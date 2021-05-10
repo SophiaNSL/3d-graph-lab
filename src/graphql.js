@@ -1,105 +1,104 @@
-import { jsonToGraphQLQuery } from 'json-to-graphql-query'
+import {jsonToGraphQLQuery} from 'json-to-graphql-query'
 
-function build_graphql_query(uuid) {
+const axios = require('axios')
 
-  var graphql_query = {
-    query: {
-      datasetSpecifications: {
-        __args: {
-          uuid: uuid
-        },
-        edges: {
-          node: {
-            name: true,
-            uuid: true,
-            dssdeinclusionSet: {
-              dataElement: {
-                uuid: true,
-                name: true,
-                dataElementConcept: {
-                  uuid: true,
-                  name: true,
-                  objectClass: {
-                    uuid: true,
-                    name: true
-                  },
-                  property: {
-                    uuid: true,
-                    name: true
-                  }
+function buildGraphqlQuery(uuid, metadataType) {
+    function getQuery(field, fieldSet) {
+        return {
+            query: {
+                [field]: {
+                    __args: {
+                        uuid: uuid
+                    },
+                    edges: {
+                        node: {
+                            name: true,
+                            uuid: true,
+                            [fieldSet]: {
+                                dataElement: {
+                                    uuid: true,
+                                    name: true,
+                                    dataElementConcept: {
+                                        uuid: true,
+                                        name: true,
+                                        objectClass: {
+                                            uuid: true,
+                                            name: true
+                                        },
+                                        property: {
+                                            uuid: true,
+                                            name: true
+                                        }
+                                    },
+                                    valueDomain: {
+                                        uuid: true,
+                                        name: true
+                                    },
+                                },
+                            },
+                        },
+                    },
                 },
-                valueDomain: {
-                  uuid: true,
-                  name: true
-                }
-              }
-            }
-          }
+            },
         }
-      }
     }
-  }
-
-  return jsonToGraphQLQuery(graphql_query)
+    if (metadataType === 'aristotle_dse:distribution') {
+        return jsonToGraphQLQuery(getQuery('distributions', 'distributiondataelementpathSet'))
+    } else {
+        return jsonToGraphQLQuery(getQuery('datasetSpecifications', 'dssdeinclusionSet'))
+    }
 }
 
-function graphql_request(baseurl, query, callback, error_callback) {
-  
-  // Set request params
-  const request_options = {
-    'method': 'GET',
-    'headers': {
-      'Accept': 'application/json',
-    },
-    'mode': 'cors',
-  }
-
-  // Set url
-  var api_url = 'https://' + baseurl + '/api/graphql/api?raw=true'
-  var url = api_url + '&query=' + query
-
-  fetch(url, request_options)
-    .then(
-      function(response) {
-        if (response.status != 200) {
-          error_callback(response.status)
+function graphqlRequest(baseurl, query, callback, errorCallback, apiToken) {
+    let headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/graphql',
+    }
+    if (apiToken) {
+        headers.Authorization = `Token ${apiToken}`
+    }
+    axios({
+        method: 'post',
+        headers: headers,
+        url: `https://${baseurl}/api/graphql/json`,
+        data: query,
+    }).then((response) => {
+        if (response.status !== 200) {
+            errorCallback(response.status)
         } else {
-          response.json()
-            .then(callback)
-            .catch(error_callback)
+            callback(response.data)
         }
-      }
-    )
-    .catch(error_callback)
-
+    }).catch((error) => {
+        errorCallback(error.response.data.detail)
+    })
 }
 
-export function gql_search(baseurl, search_text, callback, error_callback) {
-
-  var search_query = jsonToGraphQLQuery({
-    query: {
-      datasetSpecifications: {
+export function gqlSearch(baseurl, searchText, callback, errorCallback, apiToken) {
+    let params = {
         __args: {
-          name_Icontains: search_text,
-          first: 5
+            name_Icontains: searchText,
+            first: 5,
         },
         edges: {
-          node: {
-            name: true,
-            uuid: true
-          }
-        }
-      }
+            node: {
+                name: true,
+                uuid: true,
+                metadataType: true,
+            },
+        },
     }
-  })
-  graphql_request(baseurl, search_query, callback, error_callback)
-
+    let searchQuery = jsonToGraphQLQuery(
+        {
+            query: {
+                datasetSpecifications: params,
+                distributions: params,
+            },
+        },
+    )
+    graphqlRequest(baseurl, searchQuery, callback, errorCallback, apiToken)
 }
 
-export function gql_request(baseurl, uuid, callback, error_callback) {
-
-  var gql_text_query = build_graphql_query(uuid)
-  graphql_request(baseurl, gql_text_query, callback, error_callback)
-
+export function gqlRequest(baseurl, uuid, callback, errorCallback, apiToken, metadataType) {
+    let gqlTextQuery = buildGraphqlQuery(uuid, metadataType)
+    graphqlRequest(baseurl, gqlTextQuery, callback, errorCallback, apiToken)
 }
-

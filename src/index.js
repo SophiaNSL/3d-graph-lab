@@ -2,24 +2,20 @@ import './style.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import Vue from 'vue'
-import {gqlRequest, gqlSearch} from './graphql.js'
+import { gqlRequest, gqlSearch } from './graphql.js'
+import { initArgusJS } from './argus.js'
 
 new Vue({
     el: '#vue',
     data: {
         displayData: {},
         seenUuids: [],
-        uuidInput: '66eeaffc-158c-11e7-803e-0242ac110017',
-        baseurl: 'registry.aristotlemetadata.com',
-        placeHolder: 'e.g. registry.aristotlemetadata.com',
-        apiToken: '',
-        apiTokenInputType: 'password',
-        apiTokenButtonText: 'Show Token',
+        uuidInput: '',
         searchText: '',
         metadataType: '',
         displayName: '',
         displayType: '',
-        loading: true,
+        loading: false,
         searchLoading: false,
         searchResults: {},
         searchDisplay: false,
@@ -34,9 +30,7 @@ new Vue({
             valueDomain: '#a6cee3',
             property: '#fb9a99',
         },
-    },
-    mounted: function() {
-        this.initGraph()
+        argusJS: null,
     },
     computed: {
         prettyMap: function() {
@@ -46,6 +40,11 @@ new Vue({
             }
             return pMap
         },
+
+    },
+    mounted: async function() {
+        this.initGraph()
+        this.argusJS = await initArgusJS()
     },
     methods: {
         requestUuid: function(node) {
@@ -62,7 +61,7 @@ new Vue({
             let currentVue = this
 
             gqlRequest(
-                this.baseurl,
+                this.argusJS,
                 currentVue.uuidInput,
                 function(data) {
                     if ('datasetSpecifications' in data['data']) {
@@ -84,7 +83,6 @@ new Vue({
                     currentVue.errorMessage = "Request could not be completed"
                     currentVue.loading = false
                 },
-                this.apiToken,
                 this.metadataType
             )
         },
@@ -96,7 +94,7 @@ new Vue({
             this.errorMessage = ''
             let cVue = this
             gqlSearch(
-                this.baseurl,
+                this.argusJS,
                 cVue.searchText,
                 function(data) {
                     let datasetSpecificationEdges = data['data']['datasetSpecifications']['edges']
@@ -108,8 +106,7 @@ new Vue({
                     cVue.searchResults = {}
                     cVue.searchLoading = false
                     cVue.errorMessage = error
-                },
-                this.apiToken
+                }
             )
         },
         searchHide: function(event) {
@@ -208,7 +205,6 @@ new Vue({
         },
         initGraph: function() {
             /* Initialise the graph.  */
-            this.loading = true
 
             let graphElem = document.getElementById('3d-graph')
             const container = graphElem.parentElement.parentElement
@@ -228,7 +224,6 @@ new Vue({
                     .width(graphWidth)
                     .height(720)
                     .onNodeClick(this.setDisplayInfo)
-                this.request()
             })
         },
         setDisplayInfo: function(node) {
@@ -236,7 +231,8 @@ new Vue({
             this.displayInfo = {
                 Name: node.name,
                 Type: this.unCamel(node.type),
-                Link: `https://${this.baseurl}/item/${node.id}`,  // Set the display info (runs on node click).
+                // currently this link needs the baseurl, which cannot retrive from the argusJS
+                // Link: `${this.baseurl}/item/${node.id}`,  // Set the display info (runs on node click).
             }
         },
         unCamel: function(text) {
@@ -245,15 +241,6 @@ new Vue({
                 .replace(/^./, function (str) {
                     return str.toUpperCase()  // Capitalise first letter.
                 })
-        },
-        showToken: function () {
-            if (this.apiTokenInputType === 'text') {
-                this.apiTokenInputType = 'password'
-                this.apiTokenButtonText = 'Show Token'
-            } else if (this.apiTokenInputType === 'password') {
-                this.apiTokenInputType = 'text'
-                this.apiTokenButtonText = 'Hide Token'
-            }
         },
         getDropdownText: function (node) {
             if (node.metadataType === 'aristotle_dse:distribution') {

@@ -1,7 +1,5 @@
 import {jsonToGraphQLQuery} from 'json-to-graphql-query'
 
-const axios = require('axios')
-
 function buildGraphqlQuery(uuid, metadataType) {
     function getQuery(field, fieldSet) {
         return {
@@ -49,31 +47,28 @@ function buildGraphqlQuery(uuid, metadataType) {
     }
 }
 
-function graphqlRequest(baseurl, query, callback, errorCallback, apiToken) {
-    let headers = {
-        'Accept': 'application/json',
-        'Content-Type': 'application/graphql',
+function graphqlRequest(argusJS, query, callback, errorCallback) {
+    if (argusJS) {
+        argusJS.graphql(query)
+        .then((response) => {
+            if (!response.ok) {
+                return response.json().then((errorData) => {
+                    throw new Error(errorData.errors[0].message || response.status)
+                })
+            }
+            return response.json()
+        })
+        .then((data) => {
+            callback(data)
+        })
+        .catch((error) => {
+            errorCallback(error.message)
+        })
+
     }
-    if (apiToken) {
-        headers.Authorization = `Token ${apiToken}`
-    }
-    axios({
-        method: 'post',
-        headers: headers,
-        url: `https://${baseurl}/api/graphql/json`,
-        data: query,
-    }).then((response) => {
-        if (response.status !== 200) {
-            errorCallback(response.status)
-        } else {
-            callback(response.data)
-        }
-    }).catch((error) => {
-        errorCallback(error.response.data.detail)
-    })
 }
 
-export function gqlSearch(baseurl, searchText, callback, errorCallback, apiToken) {
+export function gqlSearch(argusJS, searchText, callback, errorCallback) {
     let params = {
         __args: {
             name_Icontains: searchText,
@@ -95,10 +90,10 @@ export function gqlSearch(baseurl, searchText, callback, errorCallback, apiToken
             },
         },
     )
-    graphqlRequest(baseurl, searchQuery, callback, errorCallback, apiToken)
+    graphqlRequest(argusJS, searchQuery, callback, errorCallback)
 }
 
-export function gqlRequest(baseurl, uuid, callback, errorCallback, apiToken, metadataType) {
+export function gqlRequest(argusJS, uuid, callback, errorCallback, metadataType) {
     let gqlTextQuery = buildGraphqlQuery(uuid, metadataType)
-    graphqlRequest(baseurl, gqlTextQuery, callback, errorCallback, apiToken)
+    graphqlRequest(argusJS, gqlTextQuery, callback, errorCallback)
 }

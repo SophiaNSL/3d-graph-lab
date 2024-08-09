@@ -17,6 +17,10 @@ module.exports = merge(common, {
   devtool: 'inline-source-map',
   devServer: {
     contentBase: './dist',
-    port: 9000
+    port: 9001,
+    headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type, x-csrftoken"
+      }
   },
 });

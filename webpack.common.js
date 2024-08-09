@@ -13,6 +13,15 @@ module.exports = {
       template: 'src/index.html'
     })
   ],
+  module: {
+    rules: [
+      {
+        test: /\.mjs$/,
+        include: /node_modules/,
+        type: 'javascript/auto',
+      }
+    ]
+  },
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.esm.js'

@@ -1,6 +1,6 @@
 {
   "name": "Argus 3D Graph",
-  "description": "Visualisation tool for Data Set Specifications & Distributions.",
+  "description": "Visualisation tool for Data Set Specifications and Distributions.",
   "manifest_version": "v1.0",
   "image": "https://sophiansl.github.io/3d-graph-lab/image.png",
   "publisher": "Aristotle Metadata",

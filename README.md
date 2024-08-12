@@ -1,13 +1,9 @@
-# 3d-graph-lab
+# Argus-3d-graph-app
 
 3D Graph Visualisation
-
-See the [demo][demo] for an example using the aristotle registry.
 
 ## Development
 
 - Install dependancies `npm install`
 - Run dev server `npm run start`
 - Build dist files `npm run build`
-
-[demo]: https://aristotle-3d-graph.netlify.app/

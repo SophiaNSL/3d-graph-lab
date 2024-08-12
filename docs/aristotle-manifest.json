@@ -1,23 +1,14 @@
 {
-  "name": "Test App2",
-  "description": "This is a visualisation app.",
+  "name": "Argus 3D Graph",
+  "description": "Visualisation tool for Data Set Specifications & Distributions.",
   "manifest_version": "v1.0",
-  "image": "http://localhost:9001/image.png",
+  "image": "https://sophiansl.github.io/3d-graph-lab/image.png",
   "publisher": "Aristotle Metadata",
   "publisher_email": "contact@aristotlemetadata.com",
   "contributor": "some devs from Aristotle",
-  "code_source": "https://github.com/Aristotle-Metadata-Enterprises/aristotle-labs",
+  "code_source": "https://github.com/Aristotle-Metadata-Enterprises/argus-3d-graph",
   "scope": ["metadata:read", "metadata:write", "graphql:read"],
-
   "scope_rational": "This App makes Graphql query.",
-  "custom_fields": [
-    {
-        "name":"ondc:classification-demo",
-        "choices": "OFFICIAL, PROTECTED, SECRET",
-        "order": 1,
-        "type": "enum",
-        "system_name": "ondcoool21"
-    }
-]
-
+  "help_link": "https://help.aristotlemetadata.com",
+  "width": "full"
 }
